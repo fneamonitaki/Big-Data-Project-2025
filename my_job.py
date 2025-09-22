@@ -7,6 +7,8 @@ import json
 
 
 # --- UDFs ---
+#looks for "style" in the format of a json array or a string
+#if a style is found then it returns true
 @udf(result_type="BOOLEAN")
 def has_style(value, target):
     if value is None:
@@ -21,18 +23,8 @@ def has_style(value, target):
         return target.lower() in value.lower()
     return False
 
-@udf(result_type="INT")
-def track_count(value):
-    if value is None:
-        return 0
-    try:
-        parsed = json.loads(value)
-        if isinstance(parsed, list):
-            return len(parsed)
-    except:
-        return 0
-    return 0
-
+#looks for "aritsts" in the format of a json array or a string
+#if a artist is found then it returns true
 @udf(result_type="BOOLEAN")
 def has_artist(value, target):
     if value is None:
@@ -46,7 +38,9 @@ def has_artist(value, target):
     if isinstance(value, str):
         return target.lower() in value.lower()
     return False
-
+    
+#looks for "country" in the format of a json array or a string
+#if a country is found then it returns true
 @udf(result_type="BOOLEAN")
 def has_country(value, target):
     if value is None:
@@ -61,7 +55,19 @@ def has_country(value, target):
         return target.lower() in value.lower()
     return False
 
-
+#returns the length of the json array for the field "tracklist track duration"
+@udf(result_type="INT")
+def track_count(value):
+    if value is None:
+        return 0
+    try:
+        parsed = json.loads(value)
+        if isinstance(parsed, list):
+            return len(parsed)
+    except:
+        return 0
+    return 0
+    
 #enviroment settings
 exec_env = StreamExecutionEnvironment.get_execution_environment()
 exec_env.set_parallelism(4)
@@ -221,5 +227,6 @@ SELECT
 FROM year_counts
 """)
 res8.print()
+
 
 
